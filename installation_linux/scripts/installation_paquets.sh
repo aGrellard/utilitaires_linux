@@ -5,10 +5,7 @@ echo "Mise à jour des paquets"
 sudo apt update
 
 echo "Installation des paquets de base"
-sudo apt install -y curl wget git unzip tmux
-
-echo "Installation de zsh"
-sudo apt install -y zsh
+sudo apt install -y curl wget git unzip xclip fzf hstr pandoc lynx zsh
 
 echo "Téléchargement de oh-my-zsh"
 curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -o install_ohmyzsh.sh
