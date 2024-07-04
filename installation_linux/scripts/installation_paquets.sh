@@ -24,5 +24,11 @@ rm install_ohmyzsh.sh
 
 sudo chsh -s "$(which zsh)" $USER
 
-echo "Installation terminée avec succès !"
-echo "Veuillez redémarrer votre terminal ou exécuter 'zsh' pour commencer à utiliser oh-my-zsh."
+echo "Installation du plugin zsh-autosuggestions"
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
+echo "Installation du plugin zsh-syntax-highlighting"
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+
+echo "Tout est installé ! Veuillez vous déconnecter et vous reconnecter pour utiliser zsh."
+
