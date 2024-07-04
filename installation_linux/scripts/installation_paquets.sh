@@ -16,8 +16,7 @@ curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -o ins
 echo "Lancer l'installation de oh-my-zsh"
 export RUNZSH=no
 export CHSH=no
-export KEEP_ZSHRC=yes
-sh install_ohmyzsh.sh
+sh install_ohmyzsh.sh --unattended
 
 echo "Copie du fichier de configuration depuis le dossier parent"
 cp ../config/.zshrc ~/.zshrc
