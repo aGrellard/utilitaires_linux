@@ -1,0 +1,43 @@
+---
+- name: Automatisation des installations
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Fail if not an x86_64 architecture
+      ansible.builtin.fail:
+        msg: "This playbook is intended only for x86_64 (amd64) architectures."
+      when: ansible_architecture != "x86_64"
+
+    - name: Update and upgrade all packages to the latest version
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: dist
+        cache_valid_time: 3600
+
+    - name: Install required packages
+      ansible.builtin.apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - gnupg
+          - software-properties-common
+          - build-essential
+          - zip
+          - curl
+          - wget
+          - git
+          - unzip
+          - hstr
+          - xclip
+          - vim
+          - terminator
+          - pandoc
+          - lynx
+
+
+
+  post_tasks:
+    - name: Message de fin d'installation
+      debug:
+        msg: "Tout est installé ! Veuillez vous déconnecter et vous reconnecter pour utiliser zsh."

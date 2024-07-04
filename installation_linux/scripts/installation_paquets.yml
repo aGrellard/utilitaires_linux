@@ -1,0 +1,72 @@
+---
+- name: Automatisation des installations
+  hosts: localhost
+  become: yes
+
+  tasks:
+    - name: Mise à jour des paquets
+      apt:
+        update_cache: yes
+
+    - name: Installation des paquets de base
+      apt:
+        name: 
+          - curl
+          - wget
+          - git
+          - unzip
+          - hstr
+          - xclip
+          - vim
+          - terminator
+          - pandoc
+          - lynx
+        state: present
+
+    - name: Installation de zsh
+      apt:
+        name: zsh
+        state: present
+
+    - name: Téléchargement de oh-my-zsh
+      get_url:
+        url: https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+        dest: /tmp/install_ohmyzsh.sh
+        mode: '0755'
+
+    - name: Lancer l'installation de oh-my-zsh
+      command: sh /tmp/install_ohmyzsh.sh
+      environment:
+        RUNZSH: "no"
+      args:
+        creates: ~/.oh-my-zsh
+
+    - name: Copie du fichier de configuration depuis le dossier parent
+      copy:
+        src: ../config/.zshrc
+        dest: ~/.zshrc
+
+    - name: Nettoyage du script d'installation
+      file:
+        path: /tmp/install_ohmyzsh.sh
+        state: absent
+
+    - name: Changer le shell par défaut pour zsh
+      user:
+        name: "{{ ansible_user }}"
+        shell: /usr/bin/zsh
+
+    - name: Installation du plugin zsh-autosuggestions
+      git:
+        repo: https://github.com/zsh-users/zsh-autosuggestions
+        dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+
+    - name: Installation du plugin zsh-syntax-highlighting
+      git:
+        repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
+        dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+
+  post_tasks:
+    - name: Message de fin d'installation
+      debug:
+        msg: "Tout est installé ! Veuillez vous déconnecter et vous reconnecter pour utiliser zsh."
