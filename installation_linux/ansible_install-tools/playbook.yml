@@ -35,6 +35,23 @@
           - pandoc
           - lynx
 
+    - name: Cloner le dépôt Git
+      git:
+        repo: 'https://github.com/aGrellard/utilitaires_linux.git'
+        dest: '/tmp/utilitaires_linux'
+        clone: yes
+        update: no
+
+    - name: Donner les droits d'exécution au script
+      file:
+        path: '/tmp/utilitaires_linux/installation_linux/scripts/installation_paquets.sh'
+        mode: '0755'
+        state: file
+
+    - name: Exécuter le script
+      command: '/tmp/utilitaires_linux/installation_linux/scripts/installation_paquets.sh'
+      args:
+        chdir: '/tmp/utilitaires_linux/installation_linux/scripts'
 
 
   post_tasks:
