@@ -1,0 +1,122 @@
+# File: playbook.yml
+---
+- name: Install c++ development environment
+  hosts: all
+  become: true
+  vars:
+    docker_arch: amd64
+  vars_prompt:
+    - name: git_user
+      prompt: What is your Git username?
+      private: false
+    - name: git_email
+      prompt: What is your Git email?
+      private: false
+
+  tasks:
+    - name: Fail if not an x86_64 architecture
+      ansible.builtin.fail:
+        msg: "This playbook is intended only for x86_64 (amd64) architectures."
+      when: ansible_architecture != "x86_64"
+
+    - name: Update and upgrade all packages to the latest version
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: dist
+        cache_valid_time: 3600
+        
+    - name: Install required packages
+      ansible.builtin.apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - software-properties-common
+          - git
+          - build-essential
+          - zip
+
+    - name: Create directory for Docker's GPG key
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Add Docker's official GPG key
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        keyring: /etc/apt/keyrings/docker.gpg
+        state: present
+
+    - name: Print architecture variables
+      ansible.builtin.debug:
+        msg: "Architecture: {{ ansible_architecture }}, Codename: {{ ansible_lsb.codename }}"
+
+    - name: Add Docker repository
+      ansible.builtin.apt_repository:
+        repo: >-
+          deb [arch={{ docker_arch }}
+          signed-by=/etc/apt/keyrings/docker.gpg]
+          https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable
+        filename: docker
+        state: present
+
+    - name: Install Docker and related packages
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+      loop:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+        - docker-buildx-plugin
+        - docker-compose-plugin
+
+    - name: Add Docker group
+      ansible.builtin.group:
+        name: docker
+        state: present
+
+    - name: Add user to Docker group
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: true
+
+    - name: Enable and start Docker services
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        enabled: true
+        state: started
+      loop:
+        - docker.service
+        - containerd.service
+
+    - name: Installer Git
+      ansible.builtin.apt:
+        name: git
+        state: present
+
+    - name: Configuration de Git
+      ansible.builtin.shell: |
+        git config --global user.name "{{ git_user }}"
+        git config --global user.email "{{ git_email }}"
+
+    - name: Add Firewall rules
+      ansible.builtin.apt:
+        name: ufw
+        state: present
+
+    - name: By default, deny all incoming connections
+      ansible.builtin.shell: ufw default deny incoming
+
+    - name: By default, allow all outgoing connections
+      ansible.builtin.shell: ufw default allow outgoing
+
+    - name: Allow SSH anywhere
+      ansible.builtin.shell: ufw allow OpenSSH
+      
+    - name: Enable UFW
+      ansible.builtin.shell: ufw --force enable
