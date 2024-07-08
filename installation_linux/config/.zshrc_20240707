@@ -162,4 +162,3 @@ setopt SHARE_HISTORY
 
 export PATH="$HOME/bin:$PATH"
 export PATH="$PATH:/snap/bin"
-
