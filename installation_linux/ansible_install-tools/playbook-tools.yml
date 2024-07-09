@@ -1,6 +1,6 @@
 ---
 - name: Automatisation des installations
-  hosts: hidora
+  hosts: dev
   become: true
   vars:
     user_home: "/home/{{ ansible_user }}"

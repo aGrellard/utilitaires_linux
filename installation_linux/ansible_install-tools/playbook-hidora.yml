@@ -1,7 +1,7 @@
 # File: playbook.yml
 ---
 - name: Install c++ development environment
-  hosts: all
+  hosts: hidora
   become: true
   vars:
     docker_arch: amd64
