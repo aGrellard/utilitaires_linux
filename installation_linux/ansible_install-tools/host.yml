@@ -6,15 +6,15 @@ all:
       ansible_ssh_private_key_file: ~/.ssh/id_rsa
 hidora:
   hosts:
-    multipass_vm:
-      ansible_host: xx
-      ansible_user: xx
+    hidora_vm:
+      ansible_host: gate.hidora.net
+      ansible_user: 181804-8538
       ansible_ssh_private_key_file: ~/.ssh/id_rsa
       ansible_port: 3022
 dev:
   hosts:
     multipass_vm:
-      ansible_host: xx
-      ansible_user: xx
+      ansible_host: 45.66.221.126
+      ansible_user: dev
       ansible_ssh_private_key_file: ~/.ssh/id_rsa
       ansible_port: 22

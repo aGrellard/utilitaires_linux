@@ -27,6 +27,7 @@
           - git
           - unzip
           - hstr
+          - xclip
 
     - name: Installation de zsh
       ansible.builtin.package:
